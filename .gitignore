@@ -1,0 +1,5 @@
+ml/models/
+frontend/node_modules/
+backend/Lib/
+backend/__pycache__/
+backend/Scripts/
