@@ -7,6 +7,7 @@ import Home from './Home/Home';
 import About from './About/About';
 import MNISTClassiefier from './Classifiers/MNISTClassifier/MNISTClassifier';
 import ImageClassifier from './Classifiers/ImagenetClassifier/ImagenetClassifier';
+import Astar from './Pathfinding/Astar/Astar';
 
 const AppRoutes = ()=> {
     return (     
@@ -15,6 +16,7 @@ const AppRoutes = ()=> {
             <Route path="/about" element={<About />} />    
             <Route path="/mnist-classifier" element={<MNISTClassiefier />} /> 
             <Route path="/imagenet-classifier" element={<ImageClassifier />} />   
+            <Route path="/astar-pathfinding" element={<Astar />} />  
         </Routes>
     );
 }

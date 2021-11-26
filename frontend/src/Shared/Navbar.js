@@ -22,9 +22,7 @@ const Navbar = () => {
       </Dropdown>
       <Dropdown item text='Pathfinding'>
         <Dropdown.Menu>
-          <Dropdown.Item>Electronics</Dropdown.Item>
-          <Dropdown.Item>Automotive</Dropdown.Item>
-          <Dropdown.Item>Home</Dropdown.Item>
+          <Dropdown.Item onClick={() => navigate('/astar-pathfinding')}>A* Pathfinding</Dropdown.Item>     
         </Dropdown.Menu>
       </Dropdown>
       <Menu.Item
