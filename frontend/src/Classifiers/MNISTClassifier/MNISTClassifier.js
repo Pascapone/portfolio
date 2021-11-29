@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import CanvasDraw from "react-canvas-draw";
-import { Card, Grid, Image, Button, Segment } from "semantic-ui-react";
+import { Grid, Image, Button, Segment } from "semantic-ui-react";
 
 
 const MNISTClassifier = () => {
@@ -39,7 +39,7 @@ const MNISTClassifier = () => {
     };
 
     return (
-        <div>            
+        <div style={{paddingBottom : 40}}>            
             <h1>MNIST Classifier</h1>
             <div style={{paddingBottom: 20}}>
             <div style={{width : 500, margin : 'auto'}}>

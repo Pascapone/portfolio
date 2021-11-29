@@ -51,7 +51,7 @@ const ImageClassifier = () => {
     }
 
     return (
-        <div>     
+        <div style={{paddingBottom : 40}}>     
             <Modal
                 onClose={() => setOpenHelp(false)}
                 onOpen={() => setOpenHelp(true)}

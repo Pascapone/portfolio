@@ -1,16 +1,18 @@
-import logo from './logo.svg';
 import './App.css';
 import 'semantic-ui-css/semantic.min.css'
 
 import AppRoutes from './AppRoutes';
 import Navbar from './Shared/Navbar';
 
+import {Provider, defaultTheme } from '@adobe/react-spectrum';
 
 function App() {
   return (
-    <div className="App"> 
-      <Navbar/>        
-      <AppRoutes/>
+    <div className="App">  
+      <Provider theme={defaultTheme} colorScheme="light">
+        <Navbar/>        
+        <AppRoutes/>    
+      </Provider>
     </div>
   );
 }
