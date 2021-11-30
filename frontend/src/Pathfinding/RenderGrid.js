@@ -53,7 +53,7 @@ const CreateGrid = (props) => {
 
 const RenderGrid = (props) => {
     const {pathfindingGrid, setPathfindingGrid, clearGrid, setClearGrid, selectedNodeType, setSelectedNodeType,
-        showFCost, setShowFCost } = useContext(PathfindingContext)
+        showFCost, setShowFCost, result, setResult, pathfindingRunning, setPathfindingRunning} = useContext(PathfindingContext)
     let grid = pathfindingGrid
 
     if(grid.length == 0){
@@ -71,9 +71,24 @@ const RenderGrid = (props) => {
     }    
 
     const handleNodeClicked = (e) => {
+        if(pathfindingRunning){
+            return null
+        }
+
         const id = e.target.id.split('/');
         const row = id[0]
         const col = id[1]   
+
+        if (result != 'Ready'){
+            grid.forEach(row => {
+                row.forEach(node => {
+                    if(node.nodeType == NodeType.Open || node.nodeType == NodeType.Explored || node.nodeType == NodeType.Path){
+                        node.nodeType = NodeType.Unblocked;
+                    }
+                })
+            });
+            setResult('Ready')
+        }
 
         if(selectedNodeType == 'start' || selectedNodeType == 'finish'){
             grid.forEach(row => {
@@ -102,7 +117,8 @@ const RenderGrid = (props) => {
             
             renderRow.push(
                 <Grid.Column style={{margin: 0, padding : 0}} key={'col-' + row.toString() + '/' + col.toString()}>
-                    <Segment style={{margin: 0, height : props.width, backgroundColor: color}}
+                    <Segment style={{margin: 0, height : props.width, backgroundColor: color, padding : 0}}
+                    textAlign='center'
                     onClick={handleNodeClicked} 
                     id={row.toString() + '/' + col.toString()}
                     key={'seg-' + row.toString() + '/' + col.toString()}>

@@ -7,6 +7,7 @@ from mnist_classifier import classify_mnist_image
 from imagenet_classifier import classify_image
 import json
 from astar_pathfinding import find_path
+from grid import create_grid
 
 node_config = json.load(open('../frontend/src/configs/pathfinding.json', 'r'))
 
@@ -31,7 +32,6 @@ def index(path=''):
 def classify_mnist():    
     if (request.data): 
         image = request.data
-        # print('-------This is error output-------', url, file=sys.stderr)
         result = classify_mnist_image(image)
         print('Model classification: ' + result)        
         return result
@@ -40,7 +40,6 @@ def classify_mnist():
 def classify():    
     if (request.data): 
         url = request.data
-        # print('-------This is error output-------', url, file=sys.stderr)
         result = classify_image(url)        
         print('Model classification: ' + result)        
         return result
@@ -71,3 +70,11 @@ def astar_pathfinding():
             return_path.append({'row' : node.row, 'col' : node.col})
 
         return { "status" : "success", "path" : return_path, "gridHistory" : grid_history_object }
+
+@app.route('/api-populate-grid', methods=['POST'])
+def populate_grid():    
+    if (request.data):     
+        data = json.loads(request.data)
+        grid = create_grid(node_config, *data.values())
+        grid = [[{'row' : node.row, 'col' : node.col, 'nodeType' : node.node_type} for node in row] for row in grid]
+        return {'grid' : grid}

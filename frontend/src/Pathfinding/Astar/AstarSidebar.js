@@ -4,20 +4,30 @@ import {Slider, Picker, Item, Switch } from '@adobe/react-spectrum'
 import { PathfindingContext } from '../../Context';
 
 const AstarSidebar = (props) => {
-  const [obstacleValue, setObstacleValue] = useState(50)  
+  const [obstacleValue, setObstacleValue] = useState(20)  
   const [animationTime, setAnimationTime] = useState(500)
+  const [stickPercentage, setStickPercentage] = useState(0.5)
 
   const {selectedNodeType, setSelectedNodeType, clearGrid, setClearGrid, handleFindPathClick,
-    showFCost, setShowFCost} = useContext(PathfindingContext)
+    showFCost, setShowFCost, pathfindingRunning, setPathfindingRunning, handlePopulateGridClick} = useContext(PathfindingContext)
 
   const handleItemClick = (e, { name }) => {
     switch (name) {
       case 'clear':
-        setClearGrid(true)
+        if(!pathfindingRunning){
+          setClearGrid(true)
+        }
         break;
-      case 'find':
-        handleFindPathClick(animationTime)
+      case 'find':    
+        console.log(pathfindingRunning)    
+        if(!pathfindingRunning){
+          handleFindPathClick(animationTime)
+          setPathfindingRunning(true)
+        }        
         break;    
+      case 'populate':
+        handlePopulateGridClick(obstacleValue, stickPercentage)
+        break;
       default:
         break;
     }
@@ -27,8 +37,12 @@ const AstarSidebar = (props) => {
     setShowFCost(value)
   }
 
-  const handleObstacleChange = (e, { name, value }) => {
+  const handleObstacleValueChange = (value) => {
     setObstacleValue(value)
+  }
+
+  const handleStickyPercentageValueChange = (value) => {
+    setStickPercentage(value)
   }
 
   const handleNodeTypeChanged = (value) => {
@@ -77,7 +91,18 @@ const AstarSidebar = (props) => {
           label="Obstacles" 
           defaultValue={20}
           minValue={0}
-          maxValue={40} />        
+          maxValue={40} 
+          onChange={handleObstacleValueChange}/>        
+        </Menu.Item>  
+        <Menu.Item >          
+          <Slider width={150} 
+          label="Stick Percentage" 
+          defaultValue={0.5}
+          minValue={0}
+          maxValue={1} 
+          step={0.01}
+          formatOptions={{style: 'percent', minimumFractionDigits: 0}}
+          onChange={handleStickyPercentageValueChange}/>        
         </Menu.Item>   
         <Menu.Item >
           <Picker label="Choose Node Type" width={150} onSelectionChange={handleNodeTypeChanged} defaultSelectedKey={'obstacle'}>

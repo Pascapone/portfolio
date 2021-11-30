@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, createContext } from 'react';
 import AstarSidebar from './AstarSidebar';
 import { Grid } from 'semantic-ui-react'
 import RenderGrid from '../RenderGrid';
@@ -20,15 +20,38 @@ const Astar = () => {
     const [selectedNodeType, setSelectedNodeType] = useState('obstacle')
     const [clearGrid, setClearGrid] = useState(false)
     const [pathfindingGrid, setPathfindingGrid] = useState([])
-    const [result, setResult] = useState('Result')
+    const [result, setResult] = useState('Ready')
     const [showFCost, setShowFCost] = useState(false)
+    const [pathfindingRunning, setPathfindingRunning] = useState(false)
 
     const HandleResize = () => {
         setNodeSize((window.innerWidth - gridMargin * 2) / 16)
     };   
     
-    // Api call to flask
-    const handleFindPathClick = async (animationTime) => {  
+    const handlePopulateGridClick = async (numObstacles, stickPercentage) => {
+        const response = await fetch('/api-populate-grid', {
+            method : 'POST',
+            body : JSON.stringify({numObstacles, stickPercentage, rows, cols})
+        });
+
+        if (response.status == 200){
+            const text = await response.text(); 
+            const createdGrid  = JSON.parse(text)['grid']
+            
+            createdGrid.forEach( row => {
+                row.forEach( node => {
+                    pathfindingGrid[node.row][node.col].nodeType = node.nodeType
+                })
+            })
+            setPathfindingGrid(pathfindingGrid)
+            setRerender(!rerender)
+        }
+        else{
+            console.log("Error from API.")
+        }
+    }
+
+    const handleFindPathClick = async (animationTime) => {    
         if (pathfindingGrid) {    
             let grid = pathfindingGrid
             grid.forEach(row => {
@@ -51,9 +74,10 @@ const Astar = () => {
                 handleResult(text, grid, animationTime)
             } else {
                 console.log('ERROR')
+                setPathfindingRunning(false)
                 setResult("Error from API.");
             }
-        }
+        }   
     }
 
     const timeout = (ms) => {
@@ -109,6 +133,8 @@ const Astar = () => {
             console.log(status)
             setResult(status); 
         }
+
+        setPathfindingRunning(false)
     } 
 
     useEffect(() => {        
@@ -117,9 +143,10 @@ const Astar = () => {
 
     return(
         <PathfindingContext.Provider value={{pathfindingGrid, setPathfindingGrid , clearGrid, setClearGrid, 
-            selectedNodeType, setSelectedNodeType, handleFindPathClick, showFCost, setShowFCost}}>
+            selectedNodeType, setSelectedNodeType, handleFindPathClick, showFCost, setShowFCost, result, setResult,
+            pathfindingRunning, setPathfindingRunning, handlePopulateGridClick}}>
             <div style={{paddingBottom : 40}}>
-                <div style={{position : 'absolute', zIndex: 9999}}>
+                <div style={{position : 'absolute', zIndex: 1}}>
                     <AstarSidebar/> 
                 </div>  
                 <h1>A* Pathfinding</h1>

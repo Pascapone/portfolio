@@ -2,13 +2,11 @@ import sys
 from typing_extensions import NotRequired
 import math
 from copy import deepcopy
+from grid import get_neighbours, Node
 
-
-class Node:
+class AstarNode(Node):
     def __init__(self, row, col, node_type):
-        self.row = row
-        self.col = col
-        self.node_type = node_type
+        super().__init__(row, col, node_type)
         self.h_cost = sys.maxsize
         self.g_cost = sys.maxsize
         self.f_cost = sys.maxsize
@@ -62,21 +60,6 @@ def get_current_grid(grid, open_set, closed_set, node_types):
 
     return grid
 
-def get_neighbours(node, grid):
-    neighbours = []
-    rows = len(grid)
-    cols = len(grid[0])
-
-    for row in range(-1, 2):
-        for col in range(-1, 2):
-            if row == 0 and col == 0: continue
-            elif node.col + col >= cols or node.row + row >= rows: continue
-            elif node.col + col < 0 or node.row + row < 0: continue
-
-            neighbours.append(grid[row + node.row][col + node.col])
-
-    return neighbours
-
 def find_path(grid, node_config):
     open_set = []
     closed_set = []
@@ -84,7 +67,7 @@ def find_path(grid, node_config):
 
     node_types = node_config['nodeTypes']
 
-    grid = [[Node(node['row'], node['col'], node['nodeType']) for node in row] for row in grid]
+    grid = [[AstarNode(node['row'], node['col'], node['nodeType']) for node in row] for row in grid]
 
     start_node = [[node.node_type == node_types['Start'] for node in row] for row in grid]
     if max(max(start_node)) == False:
