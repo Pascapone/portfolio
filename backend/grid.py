@@ -6,8 +6,8 @@ class Node:
         self.col = col
         self.node_type = node_type
 
-def get_neighbours(node, grid):
-        neighbours = []
+def get_neighbors(node, grid):
+        neighbors = []
         rows = len(grid)
         cols = len(grid[0])
 
@@ -17,9 +17,9 @@ def get_neighbours(node, grid):
                 elif node.col + col >= cols or node.row + row >= rows: continue
                 elif node.col + col < 0 or node.row + row < 0: continue
 
-                neighbours.append(grid[row + node.row][col + node.col])
+                neighbors.append(grid[row + node.row][col + node.col])
 
-        return neighbours     
+        return neighbors     
 
 def create_grid(node_config, num_obstacles, stick_percentage, rows, cols):      
     
@@ -48,13 +48,13 @@ def create_grid(node_config, num_obstacles, stick_percentage, rows, cols):
             if current_node in open_set:
                 open_set.remove(current_node)            
           
-        neighbours = get_neighbours(current_node, grid)
-        open_neighbours = [node for node in neighbours if node.node_type == node_types['Unblocked']]
+        neighbors = get_neighbors(current_node, grid)
+        open_neighbours = [node for node in neighbors if node.node_type == node_types['Unblocked']]
 
-        for neighbour in open_neighbours:
-            if neighbour in stick_set: 
+        for neighbor in open_neighbours:
+            if neighbor in stick_set: 
                 continue
-            stick_set.append(neighbour)
+            stick_set.append(neighbor)
 
     index = random.randint(0, len(open_set) - 1)
     current_node = open_set[index]

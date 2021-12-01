@@ -2,7 +2,7 @@ import sys
 from typing_extensions import NotRequired
 import math
 from copy import deepcopy
-from grid import get_neighbours, Node
+from grid import get_neighbors, Node
 
 class AstarNode(Node):
     def __init__(self, row, col, node_type):
@@ -87,19 +87,19 @@ def find_path(grid, node_config):
     start_node.calculate_f_cost()
 
     while not current_node is finish_node:
-        neighbours = get_neighbours(current_node, grid)
+        neighbors = get_neighbors(current_node, grid)
         
-        for neighbour in neighbours:
-            neighbour.calculate_g_cost(current_node)
+        for neighbor in neighbors:
+            neighbor.calculate_g_cost(current_node)
             
             
-            if neighbour in open_set or neighbour in closed_set:                
+            if neighbor in open_set or neighbor in closed_set:                
                 continue
 
-            if neighbour.node_type != node_types['Obstacle']:
-                neighbour.calculate_h_cost(finish_node)
-                neighbour.calculate_f_cost()
-                open_set.append(neighbour)
+            if neighbor.node_type != node_types['Obstacle']:
+                neighbor.calculate_h_cost(finish_node)
+                neighbor.calculate_f_cost()
+                open_set.append(neighbor)
             
         open_set.remove(current_node)
         closed_set.append(current_node)
