@@ -1,8 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Grid, Image, Button, Segment, Form, Icon, Modal } from "semantic-ui-react";
+import { StatusbarContext } from "../../Context";
+
+const StatusTypes = require('../../configs/status.json');
 
 const ImageClassifier = () => {  
-
+    const { globalStatus, setGlobalStatus } = useContext(StatusbarContext)
+    
     const [result, setResult] = useState("Lion");
     const [imageURL, setImageURL] = useState("https://upload.wikimedia.org/wikipedia/commons/1/1e/Cecil_the_lion_at_Hwange_National_Park_%284516560206%29.jpg");
     const [urlForm, setUrlForm] = useState(""); 
@@ -21,7 +25,7 @@ const ImageClassifier = () => {
     const LoadImageURL = (event) => {
         event.preventDefault();
         setImageURL(urlForm);
-        
+        setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : 'Image loaded' })
     };    
 
     const OpenHelpModal = () => {
@@ -34,18 +38,21 @@ const ImageClassifier = () => {
 
     // Api call to flask
     const HandlePredictClick = async (event) => {  
+        setGlobalStatus({ 'status' : StatusTypes.Loading, 'statusText' : 'Predicting...' })
         if (imageURL) {  
             setResult('Predicting...');    
             const response = await fetch('/api-classify-image', {
-              method: "POST",
-              body: imageURL,
+                method: "POST",
+                body: imageURL,
             });
     
             if (response.status === 200) {
-              const text = await response.text();
-              setResult(text);
+                const text = await response.text();
+                setResult(text);
+                setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : `Prediction complete: ${text}` })
             } else {
-              setResult("Error from API.");
+                setGlobalStatus({ 'status' : StatusTypes.Error, 'statusText' : 'Error from API' })
+                setResult("Error from API.");
             }
         }
     }

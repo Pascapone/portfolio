@@ -1,32 +1,44 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useContext } from "react";
 import CanvasDraw from "react-canvas-draw";
 import { Grid, Image, Button, Segment } from "semantic-ui-react";
+import { StatusbarContext } from "../../Context";
+
+const StatusTypes = require('../../configs/status.json');
 
 
 const MNISTClassifier = () => {
     const canvasRef = useRef();
 
+    const { globalStatus, setGlobalStatus } = useContext(StatusbarContext);
+
     const [result, setResult] = useState("None"); 
     
     const ClearCanvas = () => {
         canvasRef.current.clear();
+        setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : 'Canvas cleared' })
     };
 
     const PredictDigit = async () => {
-        const image = canvasRef.current.getSaveData();       
-        if (image) {  
+        setGlobalStatus({ 'status' : StatusTypes.Loading, 'statusText' : 'Predicting...' })
+        const image = canvasRef.current.getSaveData();        
+        if (JSON.parse(image).lines.length > 0) {  
             setResult('Predicting...');    
             const response = await fetch('/api-classify-mnist', {
-              method: "POST",
-              body: image,
+                method: "POST",
+                body: image,
             });
     
             if (response.status === 200) {
-              const text = await response.text();
-              setResult(text);
+                const text = await response.text();
+                setResult(text);
+                setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : `Prediction complete: ${text}` })
             } else {
-              setResult("Error from API.");
+                setGlobalStatus({ 'status' : StatusTypes.Error, 'statusText' : 'Error from API' })
+                setResult("Error from API.");
             }
+        }
+        else{
+            setGlobalStatus({ 'status' : StatusTypes.Failed, 'statusText' : 'Empty canvas' })
         }
     };
 
