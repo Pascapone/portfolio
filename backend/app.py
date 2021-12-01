@@ -8,6 +8,8 @@ from imagenet_classifier import classify_image
 import json
 from astar_pathfinding import find_path
 from grid import create_grid
+from knearest import create_clusters, knearest
+import numpy as np
 
 node_config = json.load(open('../frontend/src/configs/pathfinding.json', 'r'))
 
@@ -78,3 +80,49 @@ def populate_grid():
         grid = create_grid(node_config, *data.values())
         grid = [[{'row' : node.row, 'col' : node.col, 'nodeType' : node.node_type} for node in row] for row in grid]
         return {'grid' : grid}
+
+@app.route('/api-generate-clusters', methods=['POST'])
+def generate_clusters():
+    if (request.data):
+        data = json.loads(request.data)
+        points = create_clusters(**data)
+        return json.dumps([{"x": point[0], "y" : point[1] } for point in points])
+
+@app.route('/api-knearest', methods=['POST'])
+def apply_knearest():
+    if (request.data):
+        data = json.loads(request.data)
+        points = np.array([list(point.values()) for point in data['points']])
+        centers = data['nClusters'] 
+
+        runs = knearest(points, centers=centers)
+        best_run = min(runs, key=lambda x: x['cost'])        
+
+        point_marker_size = 100
+        classifier_marker_size = 200
+        
+        points = [{ 'x' : point[0], 'y' : point[1], 'classifier' : int(point[2]), 'distance' : point[3] } for point in best_run['points']]
+        
+        iteration_tracker = [   { 'points' :    [   
+                                                    {   'x' : point[0], 
+                                                        'y' : point[1],
+                                                        'z' : point_marker_size, 
+                                                        'classifier' : int(point[2]), 
+                                                        'distance' : point[3] 
+                                                    } for point in iteration[0]
+                                                ],
+                                'classifiers' : [   
+                                                    {   'x' : classifier[0],
+                                                        'y' : classifier[1], 
+                                                        'z' : classifier_marker_size, 
+                                                        'x_mass' : classifier[2], 
+                                                        'y_mass' : classifier[3]
+                                                    } for classifier in iteration[1]
+                                                ]
+                                } for iteration in best_run['iteration_tracker']
+                            ]
+
+        return_object = { 'points' : points, 'iteration_tracker' : iteration_tracker}
+
+        return json.dumps(return_object)
+        

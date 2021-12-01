@@ -8,6 +8,7 @@ import About from './About/About';
 import MNISTClassiefier from './Classifiers/MNISTClassifier/MNISTClassifier';
 import ImageClassifier from './Classifiers/ImagenetClassifier/ImagenetClassifier';
 import Astar from './Pathfinding/Astar/Astar';
+import KNearest from './Clustering/KNearest/KNearest';
 
 const AppRoutes = ()=> {
     return (     
@@ -17,6 +18,7 @@ const AppRoutes = ()=> {
             <Route path="/mnist-classifier" element={<MNISTClassiefier />} /> 
             <Route path="/imagenet-classifier" element={<ImageClassifier />} />   
             <Route path="/astar-pathfinding" element={<Astar />} />  
+            <Route path="/knearest" element={<KNearest />} />  
         </Routes>
     );
 }

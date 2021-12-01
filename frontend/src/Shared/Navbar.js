@@ -11,7 +11,6 @@ const Navbar = () => {
       </Menu.Item>      
       <Menu.Item
         name='home'
-        // active={activeItem === 'messages'}
         onClick={() => navigate('/')}
       />        
       <Dropdown item text='Classifiers'>
@@ -25,9 +24,13 @@ const Navbar = () => {
           <Dropdown.Item onClick={() => navigate('/astar-pathfinding')}>A* Pathfinding</Dropdown.Item>     
         </Dropdown.Menu>
       </Dropdown>
+      <Dropdown item text='Clustering'>
+        <Dropdown.Menu>
+          <Dropdown.Item onClick={() => navigate('/knearest')}>K-Nearest Neighbors</Dropdown.Item>     
+        </Dropdown.Menu>
+      </Dropdown>
       <Menu.Item
         name='about'
-        // active={activeItem === 'messages'}
         onClick={() => navigate('/about')}
       />
     </Menu>
