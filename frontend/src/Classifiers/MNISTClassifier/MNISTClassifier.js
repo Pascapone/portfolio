@@ -6,15 +6,7 @@ import { Grid, Image, Button, Segment } from "semantic-ui-react";
 const MNISTClassifier = () => {
     const canvasRef = useRef();
 
-    const [result, setResult] = useState("None");
-
-    // const HandleResize = () => {
-    //     setCardSize(cardRef.current.offsetWidth - canvasRightOffset)
-    // };    
-
-    // useEffect(() => {        
-    //     window.addEventListener("resize", HandleResize, false);       
-    //     }, []);
+    const [result, setResult] = useState("None"); 
     
     const ClearCanvas = () => {
         canvasRef.current.clear();

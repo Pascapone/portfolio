@@ -18,8 +18,7 @@ const AstarSidebar = (props) => {
           setClearGrid(true)
         }
         break;
-      case 'find':    
-        console.log(pathfindingRunning)    
+      case 'find':        
         if(!pathfindingRunning){
           handleFindPathClick(animationTime)
           setPathfindingRunning(true)

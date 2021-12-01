@@ -50,7 +50,7 @@ const ImageClassifier = () => {
         }
     }
 
-    return (
+    return (             
         <div style={{paddingBottom : 40}}>     
             <Modal
                 onClose={() => setOpenHelp(false)}
@@ -67,6 +67,7 @@ const ImageClassifier = () => {
                     </Button>                    
                 </Modal.Actions>
             </Modal>
+            
             <h1>Imagenet</h1>
             <div style={{paddingBottom: 20}}>
                 <div style={{width : 500, margin : 'auto'}}>
