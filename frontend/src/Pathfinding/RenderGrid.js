@@ -117,7 +117,7 @@ const RenderGrid = (props) => {
             
             renderRow.push(
                 <Grid.Column style={{margin: 0, padding : 0}} key={'col-' + row.toString() + '/' + col.toString()}>
-                    <Segment style={{margin: 0, height : props.width, backgroundColor: color, padding : 0}}
+                    <Segment style={{margin: 0, height : props.height, backgroundColor: color, padding : 0, width : props.width}}
                     textAlign='center'
                     onClick={handleNodeClicked} 
                     id={row.toString() + '/' + col.toString()}

@@ -2,20 +2,19 @@ import React, { useState, useEffect, useContext, createContext } from 'react';
 import AstarSidebar from './AstarSidebar';
 import { Grid } from 'semantic-ui-react'
 import RenderGrid from '../RenderGrid';
-import { PathfindingContext } from '../../Context';
+import { PathfindingContext, StatusbarContext } from '../../Context';
 
 const pathfindingConfig = require('../../configs/pathfinding.json');
 
 const NodeType = pathfindingConfig['nodeTypes']
 const NodeColors = pathfindingConfig['nodeColors']
 
+const StatusTypes = require('../../configs/status.json')
+
 const Astar = () => {    
+    const { globalStatus, setGlobalStatus } = useContext(StatusbarContext)   
 
-    const gridMargin = 250;
-    const rows = 8;
-    const cols = 16;
-
-    const [nodeSize, setNodeSize] = useState((window.innerWidth - gridMargin * 2) / 16);
+    const [nodeSize, setNodeSize] = useState(50);
     const [rerender, setRerender] = useState(true)
     const [selectedNodeType, setSelectedNodeType] = useState('obstacle')
     const [clearGrid, setClearGrid] = useState(false)
@@ -24,11 +23,19 @@ const Astar = () => {
     const [showFCost, setShowFCost] = useState(false)
     const [pathfindingRunning, setPathfindingRunning] = useState(false)
 
+    const rows = 8;
+    const cols = 16;
+
+    if(clearGrid){
+        setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : 'Grid cleared' })
+    }
+
     const HandleResize = () => {
-        setNodeSize((window.innerWidth - gridMargin * 2) / 16)
+        // setNodeSize((window.innerWidth - gridMargin * 2) / 16)
     };   
     
     const handlePopulateGridClick = async (numObstacles, stickPercentage) => {
+        setGlobalStatus({ 'status' : StatusTypes.Loading, 'statusText' : 'Populating Grid' })
         const response = await fetch('/api-populate-grid', {
             method : 'POST',
             body : JSON.stringify({numObstacles, stickPercentage, rows, cols})
@@ -45,13 +52,15 @@ const Astar = () => {
             })
             setPathfindingGrid(pathfindingGrid)
             setRerender(!rerender)
+            setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : 'Grid Populated' })
         }
         else{
-            console.log("Error from API.")
+            setGlobalStatus({ 'status' : StatusTypes.Error, 'statusText' : 'Error from API' })
         }
     }
 
-    const handleFindPathClick = async (animationTime) => {    
+    const handleFindPathClick = async (animationTime) => {  
+        setGlobalStatus({ 'status' : StatusTypes.Loading, 'statusText' : 'Finding Path' })  
         if (pathfindingGrid) {    
             let grid = pathfindingGrid
             grid.forEach(row => {
@@ -73,8 +82,8 @@ const Astar = () => {
                 const text = await response.text();                
                 handleResult(text, grid, animationTime)
             } else {
-                console.log('ERROR')
                 setPathfindingRunning(false)
+                setGlobalStatus({ 'status' : StatusTypes.Error, 'statusText' : 'Error from API' })
                 setResult("Error from API.");
             }
         }   
@@ -92,6 +101,7 @@ const Astar = () => {
         let currentRerender = rerender
 
         if(status == "success" || status == "blocked"){
+            setGlobalStatus({ 'status' : StatusTypes.Loading, 'statusText' : 'Playing animation' }) 
             for(const step of gridHistory){
                 for(const row of step){
                     for(const node of row){
@@ -125,12 +135,17 @@ const Astar = () => {
                         await timeout(animationTime); 
                     }                     
                 }
-            }            
+                setGlobalStatus({ 'status' : StatusTypes.Ready, 'statusText' : 'Pathfinding successful' }) 
+            } 
+            else{
+                setGlobalStatus({ 'status' : StatusTypes.Failed, 'statusText' : 'Path blocked' }) 
+            }           
                         
-            setResult(status);            
+            setResult(status);     
+                   
         }
         else{
-            console.log(status)
+            setGlobalStatus({ 'status' : StatusTypes.Error, 'statusText' : 'Error from API' }) 
             setResult(status); 
         }
 
@@ -145,21 +160,28 @@ const Astar = () => {
         <PathfindingContext.Provider value={{pathfindingGrid, setPathfindingGrid , clearGrid, setClearGrid, 
             selectedNodeType, setSelectedNodeType, handleFindPathClick, showFCost, setShowFCost, result, setResult,
             pathfindingRunning, setPathfindingRunning, handlePopulateGridClick}}>
-            <div style={{paddingBottom : 40}}>
-                <div style={{position : 'absolute', zIndex: 1}}>
+            <div style={{paddingBottom : 40, minWidth : 1200}}>
+                <Grid>
+                    <Grid.Column width={2} style={{zIndex: 1}}>
+                        <div style={{position : 'absolute', zIndex: 1}}>
                     <AstarSidebar/> 
-                </div>  
-                <h1>A* Pathfinding</h1>
-                <div style={{marginLeft: gridMargin, marginRight: gridMargin, marginTop: 40}}>
-                    <Grid>
-                        <RenderGrid width={nodeSize} 
-                            rows={rows} 
-                            cols={cols} 
-                            setRerender={setRerender} 
-                            rerender={rerender}
-                            />
-                    </Grid>
                 </div>
+                    </Grid.Column>
+                    <Grid.Column width={14}>
+                        <h1>A* Pathfinding</h1>
+                        <div style={{marginTop: 40, height : rows * nodeSize, width : cols * nodeSize, marginRight : "auto", marginLeft : "auto"}}>
+                            <Grid>
+                                <RenderGrid width={nodeSize}
+                                    height={nodeSize} 
+                                    rows={rows} 
+                                    cols={cols} 
+                                    setRerender={setRerender} 
+                                    rerender={rerender}
+                                    />
+                            </Grid>
+                        </div>
+                    </Grid.Column>
+                </Grid>      
             </div>
         </PathfindingContext.Provider>
     )

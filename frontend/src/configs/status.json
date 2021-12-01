@@ -1,5 +1,6 @@
 {
     "Ready" : "positive",
     "Loading" : "notice",
-    "Error" : "negative"
+    "Error" : "negative",
+    "Failed" : "neutral"
 }
