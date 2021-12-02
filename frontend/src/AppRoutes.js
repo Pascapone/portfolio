@@ -1,14 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link, Outlet } from "react-router-dom";
-// import ImageClassifier from './Classifiers/ImageClassifier';
-// import MNISTClassiefier from './Classifiers/MNISTClassifier';
-// import Astar_Pathfinding from './Pathfinding/Astar_Pathfinding';
+import { Routes, Route } from "react-router-dom";
 import Home from './Home/Home';
 import About from './About/About';
 import MNISTClassiefier from './Classifiers/MNISTClassifier/MNISTClassifier';
 import ImageClassifier from './Classifiers/ImagenetClassifier/ImagenetClassifier';
 import Astar from './Pathfinding/Astar/Astar';
 import KNearest from './Clustering/KNearest/KNearest';
+import Notebooks from './Notebooks/Notebooks';
 
 const AppRoutes = ()=> {
     return (     
@@ -18,9 +16,10 @@ const AppRoutes = ()=> {
             <Route path="/mnist-classifier" element={<MNISTClassiefier />} /> 
             <Route path="/imagenet-classifier" element={<ImageClassifier />} />   
             <Route path="/astar-pathfinding" element={<Astar />} />  
-            <Route path="/knearest" element={<KNearest />} />  
+            <Route path="/knearest" element={<KNearest />} />
+            <Route path="/notebooks" element={<Notebooks />} />  
         </Routes>
     );
-}
+};
 
 export default AppRoutes;

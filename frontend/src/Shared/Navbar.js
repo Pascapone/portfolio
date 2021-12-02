@@ -41,6 +41,10 @@ const Navbar = () => {
         </Dropdown.Menu>
       </Dropdown>
       <Menu.Item
+        name='notebooks'
+        onClick={() => handleNavigate('/notebooks')}
+      />
+      <Menu.Item
         name='about'
         onClick={() => handleNavigate('/about')}
       />

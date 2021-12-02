@@ -1,5 +1,5 @@
 import './App.css';
-import 'semantic-ui-css/semantic.min.css'
+import 'semantic-ui-css/semantic.min.css';
 
 import React, { useState, useEffect, useContext } from 'react';
 
@@ -7,17 +7,17 @@ import AppRoutes from './AppRoutes';
 import Navbar from './Shared/Navbar';
 import {Provider, defaultTheme } from '@adobe/react-spectrum';
 
-import Statusbar from './Shared/Statusbar'
+import Statusbar from './Shared/Statusbar';
 import { StatusbarContext } from './Context';
 
-const status = require('./configs/status.json')
+const status = require('./configs/status.json');
 
 function App() {
-  const [windowSize, setWindowSize] = useState( {"height" : window.innerHeight, "width" : window.innerWidth} )
-  const [globalStatus, setGlobalStatus] = useState( {'status' : status.Ready, 'statusText' : 'Ready'} )
+  const [windowSize, setWindowSize] = useState( {"height" : window.innerHeight, "width" : window.innerWidth} );
+  const [globalStatus, setGlobalStatus] = useState( {'status' : status.Ready, 'statusText' : 'Ready'} );
   const handleResize = () => {
-    setWindowSize({ "height" : window.innerHeight, "width" : window.innerWidth })
-  }
+    setWindowSize({ "height" : window.innerHeight, "width" : window.innerWidth });
+  };
 
   useEffect(() => {        
       window.addEventListener("resize", handleResize, false);     
@@ -37,6 +37,6 @@ function App() {
       </Provider>
     </div>
   );
-}
+};
 
 export default App;
