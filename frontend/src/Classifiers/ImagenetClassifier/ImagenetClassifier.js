@@ -5,7 +5,7 @@ import { StatusbarContext } from "../../Context";
 const StatusTypes = require('../../configs/status.json');
 
 const ImageClassifier = () => {  
-    const { globalStatus, setGlobalStatus } = useContext(StatusbarContext)
+    const { globalStatus, setGlobalStatus } = useContext(StatusbarContext);
     
     const [result, setResult] = useState("Lion");
     const [imageURL, setImageURL] = useState("https://upload.wikimedia.org/wikipedia/commons/1/1e/Cecil_the_lion_at_Hwange_National_Park_%284516560206%29.jpg");
@@ -96,7 +96,7 @@ const ImageClassifier = () => {
                                     <Button onClick={LoadImageURL}>Load Image</Button>           
                                     <Button onClick={HandlePredictClick}>Predict</Button>
                                     <Button primary icon onClick={OpenHelpModal}>
-                                        <Icon name='question circle outline' />
+                                        
                                     </Button>                                                              
                             </Grid.Row>
                         </Grid>

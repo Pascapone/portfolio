@@ -117,11 +117,12 @@ const RenderGrid = (props) => {
             
             renderRow.push(
                 <Grid.Column style={{margin: 0, padding : 0}} key={'col-' + row.toString() + '/' + col.toString()}>
-                    <Segment style={{margin: 0, height : props.height, backgroundColor: color, padding : 0, width : props.width}}
-                    textAlign='center'
-                    onClick={handleNodeClicked} 
-                    id={row.toString() + '/' + col.toString()}
-                    key={'seg-' + row.toString() + '/' + col.toString()}>
+                    <Segment style={{margin: 2, height : props.height, backgroundColor: color, padding : 0, width : props.width}}
+                        textAlign='center'
+                        onClick={handleNodeClicked} 
+                        id={row.toString() + '/' + col.toString()}
+                        key={'seg-' + row.toString() + '/' + col.toString()}
+                    >
                         {node.nodeType != NodeType['Unblocked'] && node.nodeType != NodeType['Obstacle'] && showFCost ? 
                             node.fCost
                         :

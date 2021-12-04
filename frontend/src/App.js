@@ -26,14 +26,16 @@ function App() {
 
   return (
     <div className="App">  
-      <Provider theme={defaultTheme} colorScheme="light">
+      <Provider theme={defaultTheme} colorScheme="dark" >
+        <div style={{ backgroundColor : "#ffffff"}}>
         <StatusbarContext.Provider value={{globalStatus, setGlobalStatus}}>
           <Navbar/>     
-          <div style={{overflowY: "scroll", marginLeft : '1%', marginRight : '1%', height : window.innerHeight - 105}}>  
+          <div style={{overflowY: "scroll", marginLeft : '1%', marginRight : '1%', height : window.innerHeight - 105 }} >  
             <AppRoutes/> 
           </div>    
           <Statusbar status={globalStatus.status} statusText={globalStatus.statusText}/>
         </StatusbarContext.Provider>
+        </div>
       </Provider>
     </div>
   );

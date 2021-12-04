@@ -71,19 +71,15 @@ const Home = () => {
                 style={{ marginTop : 20 }}
                 onClick={handleGithubClicked}
                 />
-            <div style={{ margin : 'auto' }}> 
+            {/* <div style={{ margin : 'auto' }}> 
                 <Canvas style={{ width : 400, height : 400, margin : 'auto'}}>                    
                     <ambientLight intensity={0.8} />
                     <pointLight position={[0, 4, 0]} intensity={1} castShadow={true}/>
-                    {/* <directionalLight color="white" position={[0, 3, 5]} />    */}
+                   
                     <hemisphereLight color="#ffffff" groundColor="#b9b9b9" position={[0, 5, 0]} intensity={0.85} />                 
-                    <AnimatedLogo/>
-                    {/* <mesh position={[0, -1.4, 0]} rotation={[-Math.PI/2, 0, 0]} scale={[50, 50, 50]} receiveShadow={true}>
-                        <planeGeometry/>
-                        <meshStandardMaterial color="#ffffff" roughness={1} metalness={0.1} /> 
-                    </mesh> */}
+                    <AnimatedLogo/>                    
                 </Canvas>
-            </div> 
+            </div>  */}
         </div>
     );
 };
