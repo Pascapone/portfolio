@@ -1,5 +1,6 @@
 ml/models/
 frontend/node_modules/
+frontend/public/FBX/
 backend/Lib/
 backend/__pycache__/
 backend/Scripts/

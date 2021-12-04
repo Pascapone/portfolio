@@ -8,7 +8,7 @@ def create_clusters(n_samples=50, centers=2, cluster_std=1):
     return points.tolist()
 
 
-def knearest(points, move_percentage=0.7, early_stopping_threshold=0.01, iterations=40, runs=100, centers=5, center_box=(-20.0, 20.0)):  
+def knearest(points, move_percentage=0.7, early_stopping_threshold=0.01, iterations=40, runs=150, centers=5, center_box=(-20.0, 20.0)):  
     
     def calculate_distance(point1, point2):
         return ((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)**0.5
