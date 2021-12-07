@@ -8,10 +8,11 @@ import Astar from './Pathfinding/Astar/Astar';
 import KNearest from './Clustering/KNearest/KNearest';
 import Notebooks from './Notebooks/Notebooks';
 
-const AppRoutes = ()=> {
+const AppRoutes = (props)=> {
+    console.log('APP ROUTES RENDER')
     return (     
         <Routes>
-            <Route path="/" element={<Home />} />        
+            <Route path="/" element={<Home homeKyleTextingTrrigger={props.homeKyleTextingTrrigger}/>} />        
             <Route path="/about" element={<About />} />    
             <Route path="/mnist-classifier" element={<MNISTClassiefier />} /> 
             <Route path="/imagenet-classifier" element={<ImageClassifier />} />   

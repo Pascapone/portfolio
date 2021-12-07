@@ -49,9 +49,9 @@ const EaseFunctions = {
 };
 
 class AnimationSequenceStep{
-  constructor(animation, duration, fadeDuration, targetPosition = null, targetRotation = null, 
+  constructor(name, duration, fadeDuration, targetPosition = null, targetRotation = null, 
       easeInOutFunction  = EaseFunctions.Linear()){
-    this.animation = animation;
+    this.animation = name;
     this.duration = duration;
     this.fadeDuration = fadeDuration;
     this.targetPosition = targetPosition;
@@ -128,6 +128,7 @@ class AnimationHandler{
     this.mixer = mixer;
     this.sceneObject = sceneObject;
     this.setSceneObjectInitial();
+    this.activeAnimation = null;
     this.setActiveAnimationSequence('Default');
   }
 
@@ -150,13 +151,13 @@ class AnimationHandler{
   }
 
   handleEndOfSequence(elapsedTime, delta){
-    this.activeAnimationSequence.endOfSequence = true;
-
+    this.activeAnimationSequence.endOfSequence = true;    
+    console.log('End of Sequence')
     switch (this.activeAnimationSequence.endOfSequenceMode) {
       case EndOfSequenceMode.RepeatSequence:
         this.activeAnimationSequence.startSequence(elapsedTime);     
         break;
-      case EndOfSequenceMode.LoopLastAnimation:
+      case EndOfSequenceMode.LoopLastAnimation:        
         break;
       case EndOfSequenceMode.FadeToNewSequence:
         this.fadeToNewSequence();
@@ -215,9 +216,16 @@ class AnimationHandler{
     return nextAnimation;
   }
 
+  playAnimation(name, fade=null){
+    if(fade && this.activeAnimation){
+      this.activeAnimation.crossFadeTo(nextAnimation.animation, nextAnimation.fadeDuration, true).play();
+    }
+  }
+
   playAnimationSequence(elapsedTime, delta){
     if(!this.activeAnimationSequence.running){
       console.log('Start Sequence')
+      
       this.activeAnimationSequence.startSequence(elapsedTime); 
       this.activeAnimationSequence.startTime = elapsedTime;
       
@@ -228,6 +236,8 @@ class AnimationHandler{
       const progress = this.calculateAnimationProgress()
       this.updatePosition(progress);
       this.updateRotation(progress);
+      console.log(this.kyleSkeletonHelper)
+      //console.log(this.sceneObject.children[1].skeleton.bones[1].position)
     }
     
     if (this.activeAnimationSequence.animationQueue.length){
@@ -249,11 +259,99 @@ class AnimationHandler{
       }
     }
     else{
-      if(this.activeAnimationSequence.stepTime >= this.activeAnimationSequence.duration && !this.activeAnimationSequence.endOfSequence){
+      if(this.activeAnimationSequence.stepTime >= this.activeAnimationSequence.activeAnimation.duration && !this.activeAnimationSequence.endOfSequence){
         this.handleEndOfSequence(elapsedTime, delta);
       }
     }   
   }
+}
+
+class AnimationLoader{
+  constructor(name, filePath){
+    this.name = name;
+    this.filePath = filePath;
+  }
+}
+
+class FBXModel{
+  constructor(modelPath, scene, position, rotation, scale, animationSequences, animationLoaders = null, castShadow =true, receiveShadow = true){
+    this.modelPath = modelPath;
+    this.position = position;
+    this.rotation = rotation;
+    this.scale = scale;
+    this.animationLoaders = animationLoaders;
+    this.castShadow = castShadow;
+    this.receiveShadow = receiveShadow;
+    this.animationSequences = animationSequences;
+    this.scene = scene;
+
+    this.modelLoaded = false;
+    this.animationsLoaded = false;
+    this.loader = new FBXLoader();
+    this.sceneObject = null;
+    this.mixer = null;
+    this.animationActions = {};
+    this.animationHandler = null;    
+
+    this.loadModel();
+  }
+
+  loadAnimations(){
+
+    for (const animation of this.animationLoaders){
+ 
+      this.loader.load( animation.filePath, ( object ) => {   
+                     
+          object.animations[0].name = animation.name;
+      
+          const animationAction = this.mixer.clipAction(object.animations[0]);                
+          this.animationActions[animation.name] = animationAction;   
+          
+          if( animation.name == this.animationLoaders.at(-1).name){ 
+
+            this.animationHandler = new AnimationHandler(this.animationSequences, this.mixer, this.sceneObject); 
+            this.modelLoaded = true;    
+
+          }
+
+        }
+
+      )
+
+    }
+
+  }
+  
+  loadModel(){
+    this.loader.load( this.modelPath, ( sceneObject ) => {   
+
+        sceneObject.scale.set(this.scale.x, this.scale.y, this.scale.z);
+        sceneObject.position.set(this.position.x, this.position.y, this.position.z);      
+        sceneObject.rotation.set(this.rotation.x, this.rotation.y, this.rotation.z);
+
+        this.mixer = new THREE.AnimationMixer( sceneObject );
+        
+        sceneObject.traverse(  ( child ) => {
+
+            if ( child.isMesh ) {  
+              child.castShadow = this.castShadow;
+              child.receiveShadow = this.receiveShadow;    
+            } 
+          }
+        )    
+
+        this.loadAnimations()
+
+        this.scene.add( sceneObject );
+        this.sceneObject = sceneObject;
+        }    
+    );
+  }
+
+  playAnimation(name){
+
+  }
+
 }
 
 class Render3DTest extends Component {
@@ -302,69 +400,53 @@ class Render3DTest extends Component {
                               { name: AnimationNames.HangLand, path : 'FBX/Animations/Hang Land.fbx'},
                               { name: AnimationNames.StandToFreehang, path : 'FBX/Animations/Stand To Freehang.fbx'}]
                               
-
+    
 
     this.animationSequences = {}  
+
     
-    const loadModelKyle = (scene) => {
-      const loader = new FBXLoader();
-      loader.load( 'FBX/Kyle.fbx', ( sceneObject ) => {
-        sceneObject.scale.set(0.01, 0.01, 0.01)
-        sceneObject.position.set(1, -1, -30)
-        let mixer = new THREE.AnimationMixer( sceneObject );
+    
+    // const loadModelKyle = (scene) => {
+    //   const loader = new FBXLoader();
+    //   loader.load( 'FBX/Kyle.fbx', ( sceneObject ) => {
+    //     sceneObject.scale.set(0.01, 0.01, 0.01)
+    //     sceneObject.position.set(1, -1, 1.5) //-30
+    //     let mixer = new THREE.AnimationMixer( sceneObject );
         
-        sceneObject.traverse( function ( child ) {
+    //     sceneObject.traverse( function ( child ) {
     
-            if ( child.isMesh ) {
+    //         if ( child.isMesh ) {
     
-              child.castShadow = true;
-              child.receiveShadow = true;
+    //           child.castShadow = true;
+    //           child.receiveShadow = true;
     
-            } 
-          }
-        )   
+    //         } 
+    //       }
+    //     )   
         
-        for (const animation of loadAnimations){
-          loader.load( animation.path, ( object ) => {              
-              object.animations[0].name = animation.name;
+    //     for (const animation of loadAnimations){
+    //       loader.load( animation.path, ( object ) => {              
+    //           object.animations[0].name = animation.name;
           
-              const animationAction = mixer.clipAction(object.animations[0]);                
-              animationActions[animation.name] = animationAction;   
+    //           const animationAction = mixer.clipAction(object.animations[0]);                
+    //           animationActions[animation.name] = animationAction;   
               
-              if( animation.name == loadAnimations.at(-1).name){    
-                let animationSequences = createKyleAnimationSequences();
-                this.kyleAnimationHandler = new AnimationHandler(animationSequences, mixer, this.robot);                         
-              }
-            }
-          )
-        }
+    //           if( animation.name == loadAnimations.at(-1).name){    
+    //             let animationSequences = createKyleAnimationSequences();
+    //             this.kyleAnimationHandler = new AnimationHandler(animationSequences, mixer, this.robot);
+                                        
+    //           }
+    //         }
+    //       )
+    //     }
 
-        scene.add( sceneObject );
-        this.robot = sceneObject;
-        return sceneObject
-      } );
-    }   
+    //     scene.add( sceneObject );
+    //     this.robot = sceneObject;
+    //     return sceneObject
+    //   } );
+    // }   
 
-    const createKyleAnimationSequences = () => {
-      let animationSequences = {};
-      var animationSequence = new AnimationSequence('Default', EndOfSequenceMode.LoopLastAnimation, 'Seccond');
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Running, 5, 1, [1, -1, -1.5],[0, 0, 0], EaseFunctions.Linear(1)));
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Idle, 1, 1, [1, -1, 1.5],[0, 0, 0], EaseFunctions.SigmoidOut(5)));
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Jump, 1.2, 0.3, [1, 0, 1.5],[0, 0, 0], EaseFunctions.SigmoidIn(9)));
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.HangingIdle, 1, 0.3, [1, 0.5, 1.5],[0, 0, 0], EaseFunctions.SigmoidOut(8)));
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.HangingIdle, 5, 0.2, [1, 0.5, 1.5],[0, 0, 0], EaseFunctions.SigmoidOut(8)));  
-
-      animationSequences[animationSequence.name] = animationSequence;
-
-      var animationSequence = new AnimationSequence('Seccond', EndOfSequenceMode.RepeatSequence);
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Running, 5, 1));
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Idle, 2, 1)); 
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Running, 5, 1));
-      animationSequence.addSequenceStep(new AnimationSequenceStep(animationActions.Idle, 2, 1));
-      animationSequences[animationSequence.name] = animationSequence;
-
-      return animationSequences;
-    }
+    
 
     // Scene Setup
     this.scene = new THREE.Scene();    
@@ -376,13 +458,29 @@ class Render3DTest extends Component {
     this.camera.position.z = 5;
     this.mount.appendChild( this.renderer.domElement );
 
+    const kyleAnimationLoaders = [new AnimationLoader('Idle', 'FBX/Animations/Idle.fbx'),
+                                  new AnimationLoader('Running', 'FBX/Animations/Running.fbx')]
+
+    const createKyleAnimationSequences = () => {
+      let animationSequences = {};
+      var animationSequence = new AnimationSequence('Default', EndOfSequenceMode.RepeatSequence, 'Seccond');      
+      animationSequence.addSequenceStep(new AnimationSequenceStep('Idle', 1, 0.5, [0, 0, 0],[0, 0, 0], EaseFunctions.SigmoidOut(5)));  
+      animationSequence.addSequenceStep(new AnimationSequenceStep('Running', 5, 0.5, [0, 0, 0],[0, 0, 0], EaseFunctions.Linear(1)));   
+      animationSequences[animationSequence.name] = animationSequence;     
+
+      return animationSequences;
+    }
+
+    this.kyleRobot = new FBXModel('FBX/kyle.fbx', this.scene, new THREE.Vector3(0,0,0), new THREE.Vector3(0,0,0),
+                    new THREE.Vector3(0.01,0.01,0.01), createKyleAnimationSequences(), kyleAnimationLoaders, true, true);
+
     // Controls
     // var orbitControls = new OrbitControls(camera, renderer.domElement);
     // orbitControls.enableDamping = true;
     // orbitControls.target.set(0, 1, 0);
         
     // Load FBX Model    
-    var robot = loadModelKyle(this.scene);    
+    // var robot = loadModelKyle(this.scene);    
 
     // Plane
     var geometry = new THREE.PlaneGeometry( 100, 40, 10 );
@@ -431,13 +529,26 @@ class Render3DTest extends Component {
     var delta = this.clock.getDelta()
     var elapsedTime = this.clock.getElapsedTime()
     
-    if(this.kyleAnimationHandler){
-      // if(!this.kyleAnimationHandler.sceneObject){
-      //   console.log('SET')
-      //   this.kyleAnimationHandler.setSceneObject(this.robot);
-      // }      
-      this.kyleAnimationHandler.update(elapsedTime, delta)
-    }   
+    // if(this.kyleAnimationHandler){
+    //   // if(!this.kyleAnimationHandler.sceneObject){
+    //   //   console.log('SET')
+    //   //   this.kyleAnimationHandler.setSceneObject(this.robot);
+    //   // }      
+    //   this.kyleAnimationHandler.update(elapsedTime, delta)
+    //   if(!this.kyleSkeletonHelper){
+    //     this.kyleSkeletonHelper = new THREE.SkeletonHelper(this.robot)
+    //   }
+    //   try {
+    //     const position = new THREE.Vector3();
+    //     console.log(this.kyleSkeletonHelper.bones[0].getWorldPosition(position))
+    //   } catch (error) {
+    //     console.log('Error')
+    //   }   
+    // }   
+
+    if(this.kyleRobot){
+      // console.log(this.kyleRobot.modelLoaded)
+    }
     
     this.renderScene()
     this.frameId = window.requestAnimationFrame(this.update)
