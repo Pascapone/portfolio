@@ -3,19 +3,13 @@ import { Dropdown, Menu } from 'semantic-ui-react'
 import { useNavigate } from 'react-router';
 
 import { StatusbarContext } from "../Context";
-import gsap from "gsap";
+
 
 const StatusTypes = require('../configs/status.json')
 
 const Navbar = () => {
   const { globalStatus, setGlobalStatus } = useContext(StatusbarContext)
-  let navigate = useNavigate();
-
-  useEffect(() => {
-    gsap.to(this, {duration : 2, ease : 'none', top : 100})
-    return () => {   
-    }
-  }, [])
+  let navigate = useNavigate(); 
 
   const handleNavigate = (routerLink) => {
     navigate(routerLink)

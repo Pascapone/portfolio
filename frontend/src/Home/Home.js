@@ -42,7 +42,7 @@ const Home = (props) => {
                 <Typing startDelay={2800} speed={6}>
                     <span style={{ fontFamily : 'Roboto-Thin', fontSize : 20 }}>This is the homepage of Pascal Schott.
                     Most of the content of this website is machine learning related. It is still under development and
-                    will likly change in the comming weeks. Most of the projects are designed to be visually appealing.
+                    will likely change in the comming weeks. Most of the projects are designed to be visually appealing.
                     A notebook section with more sophisticated machine learning examples will follow next.</span>
                 </Typing>
             </div>
