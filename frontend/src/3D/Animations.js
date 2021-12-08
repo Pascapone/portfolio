@@ -4,6 +4,21 @@ import { gsap } from "gsap";
 import { CustomEase } from "gsap/CustomEase";
 import { Vector3 } from 'three';
 
+import idleAnimationFBX from '../FBX/Animations/Idle.fbx'
+import runningAnimationFBX from '../FBX/Animations/Running.fbx'
+import jumpToFreeHangFBX from '../FBX/Animations/Jump To Freehang.fbx'
+import hangingIdleFBX from '../FBX/Animations/Hanging Idle.fbx'
+import bracedToFreeHangFBX from '../FBX/Animations/Braced To Free Hang.fbx'
+import freehangDropFBX from '../FBX/Animations/Freehang Drop.fbx'
+import standRightTurnFBX from '../FBX/Animations/Right Turn.fbx'
+import standLeftTurnFBX from '../FBX/Animations/Left Turn.fbx'
+import hardLandingFBX from '../FBX/Animations/Hard Landing.fbx'
+import fallingIdleFBX from '../FBX/Animations/Falling Idle.fbx'
+import pullHeavyObjectFBX from '../FBX/Animations/Pull Heavy Object.fbx'
+import textingWhileStandingFBX from '../FBX/Animations/Texting While Standing.fbx'
+import walkStrifeLeftFBX from '../FBX/Animations/Walk Strafe Left.fbx'
+import walkStrifeRightFBX from '../FBX/Animations/Walk Strafe Right.fbx'
+
 gsap.registerPlugin(CustomEase);
 
 
@@ -24,20 +39,20 @@ export const FBXAnimationNames = { Idle : 'Idle',
                                   WalkStrafeRight : 'WalkStrafeRight'                              
                                 }
 
-const idleAnimation = new AnimationLoader(FBXAnimationNames.Idle, 'FBX/Animations/Idle.fbx');
-const runningAnimation = new AnimationLoader(FBXAnimationNames.Running, 'FBX/Animations/Running.fbx');
-const jumpToFreeHang = new AnimationLoader(FBXAnimationNames.JumpToFreeHang, 'FBX/Animations/Jump To Freehang.fbx');
-const hangingIdle = new AnimationLoader(FBXAnimationNames.HangingIdle, 'FBX/Animations/Hanging Idle.fbx');
-const bracedToFreeHang = new AnimationLoader(FBXAnimationNames.BracedToFreeHang, 'FBX/Animations/Braced To Free Hang.fbx');
-const freehangDrop = new AnimationLoader(FBXAnimationNames.FreehangDrop, 'FBX/Animations/Freehang Drop.fbx');
-const standRightTurn = new AnimationLoader(FBXAnimationNames.StandRightTurn, 'FBX/Animations/Right Turn.fbx');
-const standLeftTurn = new AnimationLoader(FBXAnimationNames.StandLeftTurn, 'FBX/Animations/Left Turn.fbx');
-const hardLanding = new AnimationLoader(FBXAnimationNames.HardLanding, 'FBX/Animations/Hard Landing.fbx');
-const fallingIdle = new AnimationLoader(FBXAnimationNames.FallingIdle, 'FBX/Animations/Falling Idle.fbx');
-const pullHeavyObject = new AnimationLoader(FBXAnimationNames.PullHeavyObject, 'FBX/Animations/Pull Heavy Object.fbx');
-const textingWhileStanding = new AnimationLoader(FBXAnimationNames.TextingWhileStanding, 'FBX/Animations/Texting While Standing.fbx');
-const walkStrifeLeft = new AnimationLoader(FBXAnimationNames.WalkStrafeLeft, 'FBX/Animations/Walk Strafe Left.fbx');
-const walkStrifeRight = new AnimationLoader(FBXAnimationNames.WalkStrafeRight, 'FBX/Animations/Walk Strafe Right.fbx');
+const idleAnimation = new AnimationLoader(FBXAnimationNames.Idle, idleAnimationFBX);
+const runningAnimation = new AnimationLoader(FBXAnimationNames.Running, runningAnimationFBX);
+const jumpToFreeHang = new AnimationLoader(FBXAnimationNames.JumpToFreeHang, jumpToFreeHangFBX);
+const hangingIdle = new AnimationLoader(FBXAnimationNames.HangingIdle, hangingIdleFBX);
+const bracedToFreeHang = new AnimationLoader(FBXAnimationNames.BracedToFreeHang, bracedToFreeHangFBX);
+const freehangDrop = new AnimationLoader(FBXAnimationNames.FreehangDrop, freehangDropFBX);
+const standRightTurn = new AnimationLoader(FBXAnimationNames.StandRightTurn, standRightTurnFBX);
+const standLeftTurn = new AnimationLoader(FBXAnimationNames.StandLeftTurn, standLeftTurnFBX);
+const hardLanding = new AnimationLoader(FBXAnimationNames.HardLanding, hardLandingFBX);
+const fallingIdle = new AnimationLoader(FBXAnimationNames.FallingIdle, fallingIdleFBX);
+const pullHeavyObject = new AnimationLoader(FBXAnimationNames.PullHeavyObject, pullHeavyObjectFBX);
+const textingWhileStanding = new AnimationLoader(FBXAnimationNames.TextingWhileStanding, textingWhileStandingFBX);
+const walkStrifeLeft = new AnimationLoader(FBXAnimationNames.WalkStrafeLeft, walkStrifeLeftFBX);
+const walkStrifeRight = new AnimationLoader(FBXAnimationNames.WalkStrafeRight, walkStrifeRightFBX);
 
 export const kyleAnimationLoaders = [idleAnimation,
                                     runningAnimation,
@@ -78,7 +93,7 @@ export const kyleAnimations = [
 
 
 const jumpToFreeHangEase = CustomEase.create("custom", "M0,0 C0.29,0 0.238,-0.02 0.27,0.086 0.32,0.342 0.338,0.47 0.364,0.61 0.41,0.802 0.434,0.824 0.502,0.93 0.579,1.05 0.69,1.024 0.8,1 0.852,0.988 0.901,1 1,1");
-const hangDropEase = CustomEase.create("custom", "M0,0 C0.044,0.065 0.289,0.4 0.5,0.4 0.74,0.399 0.949,0.053 1,0 ")
+// const hangDropEase = CustomEase.create("custom", "M0,0 C0.044,0.065 0.289,0.4 0.5,0.4 0.74,0.399 0.949,0.053 1,0 ")
 
 export const createIntroSequence = (fieldOfView, sceneRatio, cameraZ) => {
   

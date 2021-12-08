@@ -14,6 +14,8 @@ import { Vector3 } from "three";
 
 import { Context3D } from "../Context";
 
+import kyleModel from '../FBX/Kyle.fbx'
+
 const Render3D = (props) => {
   const mount = useRef(null)
   
@@ -197,7 +199,7 @@ const Render3D = (props) => {
     mount.current.appendChild( renderer.domElement );
     
     // Kyle Model  
-    kyleRobot = new FBXModel('FBX/kyle.fbx', scene, new THREE.Vector3(0, -1, -10), new THREE.Vector3(0,0,0),
+    kyleRobot = new FBXModel(kyleModel, scene, new THREE.Vector3(0, -1, -10), new THREE.Vector3(0,0,0),
                     new THREE.Vector3(0.01,0.01,0.01), kyleAnimationLoaders, true, true, 'Idle', 0.5, kyleAnimations);
 
 
